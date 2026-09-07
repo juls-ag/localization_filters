@@ -81,7 +81,8 @@ Q = diag([ruido_v * dt, ruido_v *dt, ruido_w*dt]).^2;
 %Incertidumbre sensores
 R = diag([sigma_gps, sigma_gps, sigma_imu]).^2; %ruido en sensores
 
-P0 = eye(3)*0.1; %confianza inicial
+sigma_inicial= [0.05; 0.05; 0.05];
+P0 = diag(sigma_inicial.^2); %confianza inicial
 
 [x_estim, P_h] = eKf_l(x0, P0, v_odo, w_odo, dt, z_gps,z_imu,Q,R);
 

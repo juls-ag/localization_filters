@@ -12,13 +12,18 @@ function [x_estim, particulas_h] = mcl_l(x0,M,P0,v_odmt,w_odmt, dt, z_gps, z_imu
 % R: matriz de covarianza del ruido de los sensores
     N = size(z_gps,2);
     x_estim = zeros(3, N);
+    particulas_h = zeros(3,M,N);
 
     %particulas iniciales en t=0
-    particulas = x0 + 0.05 * randn(3,M);
+    L0 = chol(P0,'lower');
+    particulas = x0 + L0 * randn(3,M);
     pesos = ones(1,M) /M;
 
     x_estim(:,1)= mean(particulas,2);
     x_estim(3,1) = atan2(mean(sin(particulas(3,:))), mean(cos(particulas(3,:))));
+    particulas_h(:,:,1) = particulas;
+
+    L_R = chol(R,'lower'); %R es constante
 
     for k =2:N
 
@@ -38,7 +43,8 @@ function [x_estim, particulas_h] = mcl_l(x0,M,P0,v_odmt,w_odmt, dt, z_gps, z_imu
             y_i(3) = atan2(sin(y_i(3)), cos(y_i(3)));
 
 
-            pesos(i) = exp(-0.5* y_i' * inv(R)* y_i) + 1e-300; %evitar ceros
+            residuo_n = L_R \ y_i;
+            pesos(i) = exp(-0.5 * (residuo_n' * residuo_n)) + 1e-300; %evitar ceros
         end
 
         %normalizar pesos
