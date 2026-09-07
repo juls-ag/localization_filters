@@ -170,27 +170,40 @@ plot(t, x_mcl(3,:), '--k');
 ylabel('theta [rad]');
 xlabel('tiempo [s]')
 grid on;
+
 %% Comparacion
 
 % Comparar resultados
-figure;
-plot(x_r(1,:), x_r(2,:), 'b-'); % Trayectoria real
+fig_comparison = figure('Color', 'w', 'Position', [100 100 900 600]);
+
+
+plot(x_r(1,:), x_r(2,:), 'k-', 'Linewidth',2); 
 hold on;
-plot(z_gps(1,:), z_gps(2,:), 'r.'); % Mediciones GPS
-plot(x_mcl(1,:), x_mcl(2,:), 'k--'); % Estimación del estado con MCL
-plot(x_estim(1,:), x_estim(2,:), 'm-', 'LineWidth',1); % Estimación del estado con ekf
-plot(x_estim_ukf(1,:), x_estim_ukf(2,:), 'g-.', 'LineWidth',0.3); % Estimación del estado con UKF
+plot(z_gps(1,:), z_gps(2,:), '.', 'Color', [0.65 0.65 0.65], 'MarkerSize', 8); % Mediciones GPS
+plot(x_mcl(1,:), x_mcl(2,:), '--', 'Color', [0.4660 0.6740 0.1880], 'LineWidth', 1.4); % Estimación del estado con MCL
+plot(x_estim(1,:), x_estim(2,:), '-', 'Color', [0 0.4470 0.7410], 'LineWidth', 1.4); % Estimación del estado con ekf
+plot(x_estim_ukf(1,:), x_estim_ukf(2,:), '-.', 'Color', [0.8500 0.3250 0.0980], 'LineWidth', 1.4); % Estimación del estado con UKF
 
-title('Comparación de los filtros de localización');
+title('Localization Filter Comparison');
 
-legend('Trayectoria real', 'GPS con ruido', 'MCL', 'EKF', 'UKF', ...
-       'Location', 'best');
+legend('Ground truth', 'Noisy GPS', 'MCL', 'EKF', 'UKF', 'Location', 'best');
 
 xlabel('x[m]');
 ylabel('y[m]');
 grid on;
 axis equal;
+set(gca, 'FontSize', 11);
 hold off;
+
+% Save the figure used in the README
+script_dir = fileparts(mfilename('fullpath'));
+results_dir = fullfile(script_dir, 'results');
+
+if ~exist(results_dir, 'dir')
+    mkdir(results_dir);
+end
+
+exportgraphics( fig_comparison, fullfile(results_dir, 'localization_comparison.png'), 'Resolution', 180);
 
 %% Metricas
 %% Raiz del error cuadratico medio RMSE
