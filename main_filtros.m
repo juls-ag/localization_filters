@@ -36,7 +36,7 @@ sigma_imu = deg2rad(4); %rad
 z_gps = zeros(2,N); %x,y
 z_imu = zeros(1,N); %theta
 
-for k = 1:N 
+for k = 1:N
     z_gps(:,k) = x_r(1:2,k) + sigma_gps * randn(2,1); % GPS measurement with noise
     z_imu(k) = x_r(3,k) + sigma_imu * randn(1,1); % IMU measurement with noise
 end
@@ -46,7 +46,7 @@ figure;
 %GPS
 plot(x_r(1,:),x_r(2,:), 'b-');
 hold on;
-plot(z_gps(1,:), z_gps(2,:), 'ro'); % Plot GPS 
+plot(z_gps(1,:), z_gps(2,:), 'ro'); % Plot GPS
 title('Trayectoria real vs Mediciones GPS');
 legend('Trayectoria real', 'Mediciones GPS');
 xlabel('x[m]');
@@ -177,7 +177,7 @@ grid on;
 fig_comparison = figure('Color', 'w', 'Position', [100 100 900 600]);
 
 
-plot(x_r(1,:), x_r(2,:), 'k-', 'Linewidth',2); 
+plot(x_r(1,:), x_r(2,:), 'k-', 'Linewidth',2);
 hold on;
 plot(z_gps(1,:), z_gps(2,:), '.', 'Color', [0.65 0.65 0.65], 'MarkerSize', 8); % Mediciones GPS
 plot(x_mcl(1,:), x_mcl(2,:), '--', 'Color', [0.4660 0.6740 0.1880], 'LineWidth', 1.4); % Estimación del estado con MCL
@@ -235,7 +235,7 @@ rmse_theta_ekf = rad2deg(sqrt(mean(error_theta_ekf.^2)));
 rmse_theta_ukf = rad2deg(sqrt(mean(error_theta_ukf.^2)));
 rmse_theta_mcl = rad2deg(sqrt(mean(error_theta_mcl.^2)));
 
-%mostrar resultados 
+%mostrar resultados
 
 fprintf('\n--- RMSE de posicion ---\n');
 fprintf('EKF: %.4f m | UKF: %.4f m | MCL: %.4f m\n', rmse_ekf, rmse_ukf, rmse_mcl);
