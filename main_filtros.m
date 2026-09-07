@@ -76,10 +76,10 @@ w_odo = w + ruido_w * randn(1, N);
 %% EKF
 
 % Incertidumbre mov
-Q = diag([ruido_v, ruido_v, ruido_w]).^2;
+Q = diag([ruido_v * dt, ruido_v *dt, ruido_w*dt]).^2;
 
 %Incertidumbre sensores
-R = diag([sigma_gps*10, sigma_gps*10, sigma_imu]).^2; %ruido en sensores
+R = diag([sigma_gps, sigma_gps, sigma_imu]).^2; %ruido en sensores
 
 P0 = eye(3)*0.1; %confianza inicial
 

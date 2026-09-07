@@ -17,18 +17,20 @@ P_h = zeros(3,3,N);
 x=x0; %edo actual
 P=P0; %incertidumbre actual
 
-for k =1:N
-    %prediccion del edo
-    x_pr = zeros(3,1);
+% El primer edo actual es t= 0
+x_estim(:,1)= x;
+P_h(:,:,1)=P;
 
-    theta = x(3);
-    x_pr = movimiento(x,v_odmt(k), w_odmt(k), dt);
-    
+for k =2:N
+    %prediccion del edo
+    theta= x(3);
+    x_pr = movimiento(x, v_odmt(k-1), w_odmt(k-1), dt);
+
     %Jacobiano del movimiento
-    F = [1, 0, -v_odmt(k) * sin(theta) * dt; 
-         0, 1,  v_odmt(k) * cos(theta) * dt; 
+    F = [1, 0, -v_odmt(k-1) * sin(theta) * dt;
+         0, 1,  v_odmt(k-1) * cos(theta) * dt;
          0, 0, 1];
-    
+
     P_pred = F * P * F' + Q; % prediccion incetidumbre
 
     H = eye(3);
@@ -36,11 +38,11 @@ for k =1:N
 
     y = z - x_pr; %error  ---> innovacion
     y(3) = atan2(sin(y(3)), cos(y(3)));
-    
+
     %ganancia de kalman K
     S = H*P_pred*H'+ R;
     K = P_pred*H'/S;
-    
+
     % Actualizar estimación edo e incertidumbre --> Correccion
     x= x_pr + K*y;
     P= (eye(3) - K * H) * P_pred;
@@ -48,7 +50,7 @@ for k =1:N
 
     %guardar datos
     x_estim(:,k) = x;
-    P_h(:,:,k) = P; 
+    P_h(:,:,k) = P;
  end
 
 

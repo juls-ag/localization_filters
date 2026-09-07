@@ -13,15 +13,18 @@ function [x_estim,P_h] = ukf_l(x0,P0,v_odmt,w_odmt, dt, z_gps, z_imu, Q,R)
     N = size(z_gps,2);
     x_estim = zeros(3,N);
     P_h = zeros(3,3,N);
-    
+
     x=x0; %edo actual
     P=P0; %incertidumbre actual
+
+    x_estim(:,1)=x; %El primer edo es t=0
+    P_h(:,:,1) =P;
 
     L= 3; %x,y,theta --> edo
     alpha = 1e-3; % param de escala
     beta = 2;     % Dist Gaussianas
     kappa = 0;    % param de escala
-    lambda = alpha^2 * (L + kappa) - L; % 
+    lambda = alpha^2 * (L + kappa) - L; %
 
     %pesos
     Wm = zeros(1,2*L+1);
@@ -36,7 +39,7 @@ function [x_estim,P_h] = ukf_l(x0,P0,v_odmt,w_odmt, dt, z_gps, z_imu, Q,R)
     end
 
     %prediccion
-    for k = 1:N
+    for k = 2:N
         sP = chol((L + lambda) * P, "lower");
 
         %sigmas
@@ -46,7 +49,7 @@ function [x_estim,P_h] = ukf_l(x0,P0,v_odmt,w_odmt, dt, z_gps, z_imu, Q,R)
 
         for i = 1:7
             theta = sigmas(3,i);
-            sigmas_pre(:,i) = movimiento(sigmas(:,i), v_odmt(k), w_odmt(k), dt);
+            sigmas_pre(:,i) = movimiento(sigmas(:,i), v_odmt(k-1), w_odmt(k-1), dt);
         end
 
         %media predicha
@@ -54,7 +57,7 @@ function [x_estim,P_h] = ukf_l(x0,P0,v_odmt,w_odmt, dt, z_gps, z_imu, Q,R)
         for i = 1:7
             x_pr = x_pr + Wm(i) * sigmas_pre(:,i);
         end
-        
+
         x_pr(3) = atan2(sin(x_pr(3)), cos(x_pr(3)));
 
         P_pr = Q;
@@ -68,9 +71,9 @@ function [x_estim,P_h] = ukf_l(x0,P0,v_odmt,w_odmt, dt, z_gps, z_imu, Q,R)
         %actualizacion
         z_pred = zeros(3,1);
         for i = 1:7
-            z_pred = z_pred + Wm(i)* sigmas_pre(:,i); % 
+            z_pred = z_pred + Wm(i)* sigmas_pre(:,i); %
         end
-        z_pred(3) = atan2(sin(z_pred(3)), cos(z_pred(3))); 
+        z_pred(3) = atan2(sin(z_pred(3)), cos(z_pred(3)));
 
         %innovacion
         S=R;
@@ -86,7 +89,7 @@ function [x_estim,P_h] = ukf_l(x0,P0,v_odmt,w_odmt, dt, z_gps, z_imu, Q,R)
             S = S + Wc(i) * (r_z * r_z');
             Pxz = Pxz + Wc(i) * (r_x * r_z');
         end
-        
+
         %Ganancia de Kalman
         K = Pxz/ S;
 
@@ -101,9 +104,9 @@ function [x_estim,P_h] = ukf_l(x0,P0,v_odmt,w_odmt, dt, z_gps, z_imu, Q,R)
         P = 0.5 * (P +P');
 
         %guardar resultados
-        x_estim(:, k) = x; 
+        x_estim(:, k) = x;
         P_h(:, :, k) = P;
 
-    end 
+    end
 
 end
