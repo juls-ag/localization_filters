@@ -212,13 +212,26 @@ rmse_mcl = sqrt(mean(error_mcl.^2));
 max_error_mcl = max(error_mcl);
 std_error_mcl = std(error_mcl);
 
+%Error angular
+error_theta_ekf =atan2( sin(x_r(3,:)- x_estim(3,:)), cos(x_r(3,:) - x_estim(3,:)));
+error_theta_ukf =atan2( sin(x_r(3,:)- x_estim_ukf(3,:)), cos(x_r(3,:) - x_estim_ukf(3,:)));
+error_theta_mcl =atan2( sin(x_r(3,:)- x_mcl(3,:)), cos(x_r(3,:) - x_mcl(3,:)));
+
+
+rmse_theta_ekf = rad2deg(sqrt(mean(error_theta_ekf.^2)));
+rmse_theta_ukf = rad2deg(sqrt(mean(error_theta_ukf.^2)));
+rmse_theta_mcl = rad2deg(sqrt(mean(error_theta_mcl.^2)));
+
 %mostrar resultados 
 
-fprintf('\n--- RMSE ---\n');
+fprintf('\n--- RMSE de posicion ---\n');
 fprintf('EKF: %.4f m | UKF: %.4f m | MCL: %.4f m\n', rmse_ekf, rmse_ukf, rmse_mcl);
 
-fprintf('\n--- Error Maximo ---\n');
+fprintf('\n--- RMSE angular ---\n');
+fprintf('EKF: %.2f deg | UKF: %.2f deg | MCL: %.2f deg\n', rmse_theta_ekf, rmse_theta_ukf, rmse_theta_mcl);
+
+fprintf('\n--- Error Maximo de posicion ---\n');
 fprintf('EKF: %.4f m | UKF: %.4f m | MCL: %.4f m\n', max_error_ekf, max_error_ukf, max_error_mcl);
 
-fprintf('\n--- Desviacion estandar ---\n');
+fprintf('\n--- Desviacion estandar del error de posicion ---\n');
 fprintf('EKF: %.4f m | UKF: %.4f m | MCL: %.4f m\n', std_error_ekf,std_error_ukf,std_error_mcl);
