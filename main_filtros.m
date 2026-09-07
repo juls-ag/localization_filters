@@ -156,7 +156,7 @@ hold on;
 plot(t, x_estim(2,:), '--r');
 plot(t, x_estim_ukf(2,:), '-.g');
 plot(t, x_mcl(2,:), ':k');
-ylabel('x[m]');
+ylabel('y[m]');
 grid on;
 
 %para theta
@@ -180,10 +180,10 @@ plot(x_mcl(1,:), x_mcl(2,:), 'k--'); % Estimación del estado con MCL
 plot(x_estim(1,:), x_estim(2,:), 'm-', 'LineWidth',1); % Estimación del estado con ekf
 plot(x_estim_ukf(1,:), x_estim_ukf(2,:), 'g-.', 'LineWidth',0.3); % Estimación del estado con UKF
 
-title('Trayectoria real vs MCL vs EKF vs UKF');
+title('Comparación de los filtros de localización');
 
-legend('show', 'Location','best')
-legend('Trayectoria real', 'Gps con ruido', 'MCL', 'UKF', 'EKF');
+legend('Trayectoria real', 'GPS con ruido', 'MCL', 'EKF', 'UKF', ...
+       'Location', 'best');
 
 xlabel('x[m]');
 ylabel('y[m]');
